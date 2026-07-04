@@ -2,8 +2,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from IPython.display import FileLink, display
-
 
 def install_dependencies() -> None:
     packages = ["bark", "scipy", "torch"]
@@ -57,6 +55,8 @@ SCENE = [
 
 def main() -> None:
     output_dir = Path.cwd()
+    from IPython.display import FileLink, display
+
     sample_rate, generate_audio, preload_models, write_wav = load_dependencies()
 
     try:
