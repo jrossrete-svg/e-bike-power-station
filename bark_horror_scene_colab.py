@@ -2,24 +2,28 @@ import subprocess
 import sys
 from pathlib import Path
 
+from IPython.display import FileLink, display
+
 
 def install_dependencies() -> None:
     packages = ["bark", "scipy", "torch"]
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *packages])
 
 
-install_dependencies()
+def load_dependencies():
+    install_dependencies()
 
-try:
-    from bark import SAMPLE_RATE, generate_audio, preload_models
-except ImportError:
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "-q", "git+https://github.com/suno-ai/bark.git"]
-    )
-    from bark import SAMPLE_RATE, generate_audio, preload_models
+    try:
+        from bark import SAMPLE_RATE, generate_audio, preload_models
+    except ImportError:
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "-q", "git+https://github.com/suno-ai/bark.git"]
+        )
+        from bark import SAMPLE_RATE, generate_audio, preload_models
 
-from IPython.display import FileLink, display
-from scipy.io.wavfile import write as write_wav
+    from scipy.io.wavfile import write as write_wav
+
+    return SAMPLE_RATE, generate_audio, preload_models, write_wav
 
 
 SCENE = [
@@ -53,25 +57,40 @@ SCENE = [
 
 def main() -> None:
     output_dir = Path.cwd()
+    sample_rate, generate_audio, preload_models, write_wav = load_dependencies()
 
     try:
         print("Preloading Bark models...")
         preload_models()
     except Exception as exc:
         print(f"Model loading failed: {exc}")
-        raise SystemExit(1)
+        sys.exit(1)
 
     generated_files = []
+    failed_files = []
     for line in SCENE:
         print(f"Generating {line['filename']} with {line['voice_preset']}...")
-        audio = generate_audio(line["text"], history_prompt=line["voice_preset"])
-        file_path = output_dir / line["filename"]
-        write_wav(file_path, SAMPLE_RATE, audio)
-        generated_files.append(file_path)
+        try:
+            audio = generate_audio(line["text"], history_prompt=line["voice_preset"])
+            file_path = output_dir / line["filename"]
+            write_wav(file_path, sample_rate, audio)
+            generated_files.append(file_path)
+        except Exception as exc:
+            failed_files.append((line["filename"], str(exc)))
+            print(f"Failed to generate {line['filename']}: {exc}")
 
-    print("\nDownload links:")
-    for file_path in generated_files:
-        display(FileLink(str(file_path), result_html_prefix=f"{file_path.name}: "))
+    if generated_files:
+        print("\nDownload links:")
+        for file_path in generated_files:
+            display(FileLink(str(file_path), result_html_prefix=f"{file_path.name}: "))
+    else:
+        print("No audio files were generated.")
+
+    if failed_files:
+        print("\nGeneration failures:")
+        for filename, error in failed_files:
+            print(f"- {filename}: {error}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
