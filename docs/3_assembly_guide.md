@@ -1,6 +1,6 @@
 # 3) Detailed Picture Assembly Guide
 
-Use this as a shot-by-shot build script. For each step, capture the listed photos and place them in `/home/runner/work/e-bike-power-station/e-bike-power-station/assets/images/`.
+Use this as a shot-by-shot build script. For each step, capture the listed photos and place them in [assets/images/](../assets/images/).
 
 ---
 
