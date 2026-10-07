@@ -18,10 +18,10 @@ This repository contains a complete build blueprint for converting a long-case 4
 
 ## Quick Start
 
-1. Read `/home/runner/work/e-bike-power-station/e-bike-power-station/docs/1_hardware_BOM.md`
-2. Review wiring and power limits in `/home/runner/work/e-bike-power-station/e-bike-power-station/docs/2_schematics.md`
-3. Follow the picture guide in `/home/runner/work/e-bike-power-station/e-bike-power-station/docs/3_assembly_guide.md`
-4. Add your build photos to `/home/runner/work/e-bike-power-station/e-bike-power-station/assets/images/`
+1. Read [docs/1_hardware_BOM.md](docs/1_hardware_BOM.md)
+2. Review wiring and power limits in [docs/2_schematics.md](docs/2_schematics.md)
+3. Follow the picture guide in [docs/3_assembly_guide.md](docs/3_assembly_guide.md)
+4. Add your build photos to [assets/images/](assets/images/)
 
 ## Critical Safety Limit
 
